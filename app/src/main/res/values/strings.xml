@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">UPI Payment Speaker</string>
+
+    <!-- Notification listener service label (shown in the system Notification
+         Access settings screen). -->
+    <string name="notification_listener_label">UPI Payment Speaker</string>
+
+    <!-- Notification channels -->
+    <string name="channel_speaker_name">UPI Speaker</string>
+    <string name="channel_speaker_description">Persistent status notification while listening for UPI payments.</string>
+    <string name="channel_alerts_name">Setup Alerts</string>
+    <string name="channel_alerts_description">Warnings when battery optimisation or autostart has been disabled.</string>
+
+    <!-- Foreground service text -->
+    <string name="fgs_title">UPI Speaker is listening</string>
+    <string name="fgs_text">%1$d transactions announced today</string>
+    <string name="fgs_text_idle">Waiting for the next payment…</string>
+    <string name="fgs_action_mute">Mute</string>
+    <string name="fgs_action_resume">Resume</string>
+
+    <!-- Main screen -->
+    <string name="status_listening">Listening</string>
+    <string name="status_setup_needed">Setup needed</string>
+    <string name="status_paused">Paused</string>
+    <string name="start_listening">Start listening</string>
+    <string name="stop_listening">Stop</string>
+    <string name="test_announcement">Test announcement</string>
+    <string name="open_settings">Open settings</string>
+    <string name="recent_transactions">Recent transactions</string>
+    <string name="no_transactions_yet">No transactions yet — make a small test payment to verify.</string>
+
+    <!-- Onboarding strings -->
+    <string name="onboarding_welcome_title">Hear every UPI payment</string>
+    <string name="onboarding_welcome_body">This app speaks the amount aloud whenever a UPI payment notification arrives — even when the screen is off. To make this reliable on your phone we need a few permissions.</string>
+
+    <string name="onboarding_notif_listener_title">Allow notification access</string>
+    <string name="onboarding_notif_listener_body">We read transaction notifications from your UPI apps (PhonePe, Google Pay, Paytm, your bank) and speak the amount. We never send anything off the device.</string>
+
+    <string name="onboarding_notif_post_title">Allow notifications</string>
+    <string name="onboarding_notif_post_body">A small status icon stays in the tray so the app keeps running.</string>
+
+    <string name="onboarding_exact_alarm_title">Allow exact alarms</string>
+    <string name="onboarding_exact_alarm_body">Used by our watchdog (every 30 minutes) to verify the listener is still active.</string>
+
+    <string name="onboarding_battery_title">Disable battery optimisation</string>
+    <string name="onboarding_battery_body">Your phone may otherwise put us to sleep and silently drop transactions.</string>
+
+    <string name="onboarding_oem_title">%1$s background settings</string>
+    <string name="onboarding_oem_body">%1$s applies extra background restrictions on top of standard Android. Please enable Autostart and add this app to the unrestricted battery list — without this, announcements will be missed.</string>
+
+    <string name="onboarding_vivo_extra_title">Vivo: extra steps</string>
+    <string name="onboarding_vivo_extra_body">1. Open the Recents screen, swipe down on this app, and tap the lock icon so iManager won\'t sweep it.\n\n2. Settings → Battery → Background power consumption management → set this app to "Allow background high power consumption".</string>
+
+    <string name="onboarding_test_title">Make a test announcement</string>
+    <string name="onboarding_test_body">Tap the button below — you should hear "Test: two hundred and fifty rupees received". This also helps the system remember our audio service so it survives Doze.</string>
+
+    <string name="step_of">Step %1$d of %2$d</string>
+    <string name="grant_permission">Grant permission</string>
+    <string name="open_oem_setting">Open setting</string>
+    <string name="finish">Done</string>
+
+    <!-- Restriction warnings -->
+    <string name="warn_battery_opt_re_enabled">Battery optimisation is on — announcements may be missed. Tap to fix.</string>
+    <string name="warn_listener_unbound">Notification access has been disabled. Tap to fix.</string>
+    <string name="warn_restricted_bucket">The system has put this app in restricted mode. Open the app once a day to keep it active.</string>
+    <string name="warn_exact_alarm_revoked">Exact alarms permission revoked. Tap to fix.</string>
+
+    <!-- Test announcement -->
+    <string name="tts_test_amount">Test: two hundred and fifty rupees received</string>
+</resources>

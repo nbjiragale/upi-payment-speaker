@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Play-store flavour: deliberately empty.
+
+    The play variant must NOT declare RECEIVE_SMS / READ_SMS. Per Google Play
+    policy these permissions are only granted to apps actively registered as
+    the default SMS, Phone, or Assistant handler — a UPI announcer does not
+    qualify and a Play submission containing them will be rejected.
+
+    The sideload flavour (see app/src/sideload/AndroidManifest.xml) adds the
+    SMS permissions and the SmsReceiver registration.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" />

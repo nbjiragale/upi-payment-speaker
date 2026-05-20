@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- ============================================================ -->
+    <!--  Core background-execution survival permissions               -->
+    <!--  (See docs/PLAN.md §6 — Permissions matrix.)                  -->
+    <!-- ============================================================ -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+
+    <!-- Notification permissions / channels -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+
+    <!-- Foreground service (Android 14+ requires the type-specific permission) -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+
+    <!-- Audio routing for TTS over Bluetooth speaker / built-in speaker -->
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+
+    <!--
+        Discover installed UPI / bank apps so the parser can route notifications
+        to the correct extractor. Declare the use case in the Play submission.
+    -->
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
+        tools:ignore="QueryAllPackagesPermission" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.UpiSpeaker">
+
+        <!--  ===========================================================  -->
+        <!--   Activities                                                  -->
+        <!--  ===========================================================  -->
+        <activity
+            android:name=".ui.MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ui.OnboardingActivity"
+            android:exported="false" />
+
+        <!--  ===========================================================  -->
+        <!--   Foreground service — type=mediaPlayback                     -->
+        <!--                                                               -->
+        <!--   Per the plan §5.1 — mediaPlayback is the most honest type   -->
+        <!--   for a TTS speaker, survives best on aggressive OEMs and     -->
+        <!--   does not carry the Android 15 dataSync/mediaProcessing      -->
+        <!--   time limits.                                                -->
+        <!--  ===========================================================  -->
+        <service
+            android:name=".service.SpeakerForegroundService"
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback" />
+
+        <!--  ===========================================================  -->
+        <!--   NotificationListenerService — Path A (primary trigger)      -->
+        <!--                                                               -->
+        <!--   The user enables this once under                            -->
+        <!--   Settings → Notifications → Special access → Notification    -->
+        <!--   access. The service is then bound by the system across      -->
+        <!--   reboots (except after force-stop).                          -->
+        <!--  ===========================================================  -->
+        <service
+            android:name=".service.UpiNotificationListener"
+            android:exported="true"
+            android:label="@string/notification_listener_label"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
+
+        <!--  ===========================================================  -->
+        <!--   Receivers                                                   -->
+        <!--  ===========================================================  -->
+
+        <!-- BootReceiver re-arms the watchdog and rebinds the listener on:
+             * reboot           (BOOT_COMPLETED)
+             * app update       (MY_PACKAGE_REPLACED)
+             * clock change     (TIME_SET, TIMEZONE_CHANGED)
+             On Vivo, Xiaomi, and Oppo this only fires if the user has
+             granted "Autostart" privileges. -->
+        <receiver
+            android:name=".alarm.BootReceiver"
+            android:exported="true">
+            <intent-filter android:priority="999">
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Watchdog heartbeat — fired by setAlarmClock every ~30 min to
+             verify the foreground service is alive and the listener is
+             bound, and rebind if not. -->
+        <receiver
+            android:name=".alarm.WatchdogReceiver"
+            android:exported="false" />
+
+    </application>
+
+</manifest>

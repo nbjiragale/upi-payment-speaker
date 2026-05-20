@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<full-backup-content>
+    <!-- DataStore preferences are user settings; safe to back up. -->
+    <include domain="file" path="datastore/" />
+    <!-- Transaction log contains payment metadata — do NOT back it up. -->
+    <exclude domain="database" />
+</full-backup-content>

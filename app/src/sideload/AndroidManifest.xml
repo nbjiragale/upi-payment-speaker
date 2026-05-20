@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Sideload-only manifest additions for SMS-based detection (Path B).
+
+    DO NOT ship this flavour on Google Play — see
+    docs/PLAN.md §6 (Permissions matrix) and §11 (Distribution strategy).
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.READ_SMS" />
+
+    <application>
+        <!--
+            SMS_RECEIVED is a protected broadcast; the system delivers it with
+            android.permission.BROADCAST_SMS, which we declare on the receiver.
+            Priority HIGH so we see the message before any default messaging
+            app dismisses or marks it read.
+        -->
+        <receiver
+            android:name=".service.SmsReceiver"
+            android:exported="true"
+            android:permission="android.permission.BROADCAST_SMS">
+            <intent-filter android:priority="999">
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+            </intent-filter>
+        </receiver>
+
+    </application>
+
+</manifest>
