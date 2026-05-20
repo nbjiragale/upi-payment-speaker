@@ -61,16 +61,12 @@ class UpiNotificationListener : NotificationListenerService() {
             Log.d(TAG, "Duplicate transaction, ignoring: ${tx.dedupeKey()}")
             return
         }
-        SpeakerForegroundService.announce(this, utteranceFor(tx))
-    }
-
-    private fun utteranceFor(tx: com.nbjiragale.upispeaker.parser.Transaction): String {
-        // The foreground service has the full TTS pipeline; here we just
-        // form the raw text and let it speak.  In M2 this moves into a
-        // shared helper.
-        val rupees = tx.amountPaise / 100L
-        val words = com.nbjiragale.upispeaker.tts.NumberToWords.englishIndian(rupees)
-        return "$words rupees received"
+        SpeakerForegroundService.announceTransaction(
+            this,
+            tx.amountPaise,
+            tx.sourcePackage,
+            tx.rawText
+        )
     }
 
     private companion object { const val TAG = "UpiNotifListener" }

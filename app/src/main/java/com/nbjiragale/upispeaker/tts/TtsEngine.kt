@@ -13,8 +13,9 @@ import java.util.Locale
  * A thin wrapper around android.speech.tts.TextToSpeech that:
  *   * lazy-initialises on first use,
  *   * pre-warms with a no-op utterance (engines have a cold-start cost),
- *   * announces over STREAM_NOTIFICATION so it doesn't get ducked / muted
- *     with music,
+ *   * announces over STREAM_ALARM so it plays at maximum volume and is
+ *     never ducked or muted,
+ *   * supports locale switching for multi-language announcements,
  *   * exposes a coroutine-friendly callback hook so AnnouncementQueue can
  *     speak sequentially.
  */
@@ -23,6 +24,7 @@ class TtsEngine(private val context: Context) {
     private var tts: TextToSpeech? = null
     private var initialised = false
     private val pending = ArrayDeque<Utterance>()
+    private var currentLocale: Locale = Locale("en", "IN")
 
     private data class Utterance(val text: String, val id: String, val onDone: (Boolean) -> Unit)
 
@@ -34,10 +36,10 @@ class TtsEngine(private val context: Context) {
         }
         tts = TextToSpeech(context.applicationContext) { status ->
             if (status == TextToSpeech.SUCCESS) {
-                tts?.language = Locale("en", "IN")
+                tts?.language = currentLocale
                 tts?.setAudioAttributes(
                     AudioAttributes.Builder()
-                        .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                        .setUsage(AudioAttributes.USAGE_ALARM)
                         .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
                         .build()
                 )
@@ -61,10 +63,33 @@ class TtsEngine(private val context: Context) {
             return
         }
         val params = Bundle().apply {
-            putInt(TextToSpeech.Engine.KEY_PARAM_STREAM, AudioManager.STREAM_NOTIFICATION)
+            putInt(TextToSpeech.Engine.KEY_PARAM_STREAM, AudioManager.STREAM_ALARM)
         }
         progressByUtterance[utteranceId] = onDone
         tts?.speak(text, TextToSpeech.QUEUE_ADD, params, utteranceId)
+    }
+
+    /**
+     * Change the TTS locale for subsequent utterances.
+     * Returns true if the locale was set successfully.
+     */
+    fun setLocale(locale: Locale): Boolean {
+        currentLocale = locale
+        if (!initialised) return true
+        val result = tts?.setLanguage(locale)
+        return result == TextToSpeech.LANG_AVAILABLE ||
+            result == TextToSpeech.LANG_COUNTRY_AVAILABLE ||
+            result == TextToSpeech.LANG_COUNTRY_VAR_AVAILABLE
+    }
+
+    /**
+     * Maximise the alarm stream volume before speaking so the announcement
+     * is always audible.
+     */
+    fun maximiseVolume() {
+        val am = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        val maxVol = am.getStreamMaxVolume(AudioManager.STREAM_ALARM)
+        am.setStreamVolume(AudioManager.STREAM_ALARM, maxVol, 0)
     }
 
     fun shutdown() {
@@ -76,8 +101,6 @@ class TtsEngine(private val context: Context) {
     }
 
     private fun preWarm() {
-        // A near-empty utterance forces the engine to allocate native
-        // resources up-front so the first real announcement is snappy.
         speak(" ", "warmup-${System.currentTimeMillis()}") {}
     }
 

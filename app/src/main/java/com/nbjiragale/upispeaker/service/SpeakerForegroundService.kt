@@ -54,12 +54,25 @@ class SpeakerForegroundService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {
             ACTION_ANNOUNCE -> {
-                // Path A and Path B both route here.  In Milestone 2 we'll
-                // attach the parsed Transaction as a Parcelable extra; for
-                // the scaffold the receivers just trigger a test utterance.
                 val text = intent.getStringExtra(EXTRA_TEXT)
-                if (!text.isNullOrBlank() && !settings.isMuted()) {
-                    queue.enqueueText(text)
+                val amountPaise = intent.getLongExtra(EXTRA_AMOUNT_PAISE, -1L)
+                if (!settings.isMuted()) {
+                    if (amountPaise > 0) {
+                        val tx = Transaction(
+                            direction = Transaction.Direction.CREDIT,
+                            amountPaise = amountPaise,
+                            payerOrPayee = null,
+                            referenceId = null,
+                            sourcePackage = intent.getStringExtra(EXTRA_SOURCE_PKG) ?: "",
+                            source = Transaction.Source.NOTIFICATION,
+                            rawText = text ?: "",
+                            timestampMs = System.currentTimeMillis()
+                        )
+                        queue.enqueue(tx)
+                        showPopupIfEnabled(amountPaise)
+                    } else if (!text.isNullOrBlank()) {
+                        queue.enqueueText(text)
+                    }
                 }
             }
             ACTION_TEST -> queue.enqueueText(getString(R.string.tts_test_amount))
@@ -125,6 +138,14 @@ class SpeakerForegroundService : Service() {
             .build()
     }
 
+    private fun showPopupIfEnabled(amountPaise: Long) {
+        if (!settings.showPaymentPopup) return
+        val popupIntent = Intent(this, com.nbjiragale.upispeaker.ui.PaymentPopupActivity::class.java)
+            .putExtra(com.nbjiragale.upispeaker.ui.PaymentPopupActivity.EXTRA_AMOUNT_PAISE, amountPaise)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        startActivity(popupIntent)
+    }
+
     private fun pendingIntentFlags(): Int =
         PendingIntent.FLAG_UPDATE_CURRENT or
             (if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0)
@@ -136,6 +157,8 @@ class SpeakerForegroundService : Service() {
         const val ACTION_TEST = "com.nbjiragale.upispeaker.TEST"
         const val ACTION_REFRESH_NOTIFICATION = "com.nbjiragale.upispeaker.REFRESH"
         const val EXTRA_TEXT = "extra_text"
+        const val EXTRA_AMOUNT_PAISE = "extra_amount_paise"
+        const val EXTRA_SOURCE_PKG = "extra_source_pkg"
 
         fun start(context: Context) {
             val intent = Intent(context, SpeakerForegroundService::class.java)
@@ -154,6 +177,19 @@ class SpeakerForegroundService : Service() {
             val intent = Intent(context, SpeakerForegroundService::class.java)
                 .setAction(ACTION_ANNOUNCE)
                 .putExtra(EXTRA_TEXT, text)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                context.startForegroundService(intent)
+            } else {
+                context.startService(intent)
+            }
+        }
+
+        fun announceTransaction(context: Context, amountPaise: Long, sourcePackage: String, rawText: String) {
+            val intent = Intent(context, SpeakerForegroundService::class.java)
+                .setAction(ACTION_ANNOUNCE)
+                .putExtra(EXTRA_AMOUNT_PAISE, amountPaise)
+                .putExtra(EXTRA_SOURCE_PKG, sourcePackage)
+                .putExtra(EXTRA_TEXT, rawText)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 context.startForegroundService(intent)
             } else {

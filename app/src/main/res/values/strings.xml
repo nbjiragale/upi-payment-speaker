@@ -66,6 +66,18 @@
     <string name="warn_restricted_bucket">The system has put this app in restricted mode. Open the app once a day to keep it active.</string>
     <string name="warn_exact_alarm_revoked">Exact alarms permission revoked. Tap to fix.</string>
 
+    <!-- Payment popup -->
+    <string name="popup_payment_received">Payment Received</string>
+
+    <!-- TTS settings -->
+    <string name="tts_settings_title">TTS Settings</string>
+    <string name="tts_primary_language">Primary language</string>
+    <string name="tts_second_language">Second language</string>
+    <string name="tts_mode_label">Announcement mode</string>
+    <string name="tts_mode_single">Single language</string>
+    <string name="tts_mode_dual">Dual language (one after another)</string>
+    <string name="tts_show_popup">Show payment popup</string>
+
     <!-- Test announcement -->
     <string name="tts_test_amount">Test: two hundred and fifty rupees received</string>
 </resources>
