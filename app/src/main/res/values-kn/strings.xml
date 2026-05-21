@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">UPI ಪಾವತಿ ಸ್ಪೀಕರ್</string>
+    <string name="permission_granted">ಅನುಮತಿ ನೀಡಲಾಗಿದೆ ✓</string>
+
+    <string name="notification_listener_label">UPI ಪಾವತಿ ಸ್ಪೀಕರ್</string>
+
+    <!-- Notification channels -->
+    <string name="channel_speaker_name">UPI ಸ್ಪೀಕರ್</string>
+    <string name="channel_speaker_description">UPI ಪಾವತಿಗಳನ್ನು ಆಲಿಸುವಾಗ ನಿರಂತರ ಸ್ಥಿತಿ ಅಧಿಸೂಚನೆ.</string>
+    <string name="channel_alerts_name">ಸೆಟಪ್ ಎಚ್ಚರಿಕೆಗಳು</string>
+    <string name="channel_alerts_description">ಬ್ಯಾಟರಿ ಆಪ್ಟಿಮೈಸೇಶನ್ ಅಥವಾ ಆಟೋಸ್ಟಾರ್ಟ್ ನಿಷ್ಕ್ರಿಯಗೊಂಡಾಗ ಎಚ್ಚರಿಕೆಗಳು.</string>
+
+    <!-- Foreground service text -->
+    <string name="fgs_title">UPI ಸ್ಪೀಕರ್ ಆಲಿಸುತ್ತಿದೆ</string>
+    <string name="fgs_text">ಇಂದು %1$d ವ್ಯವಹಾರಗಳನ್ನು ಘೋಷಿಸಲಾಗಿದೆ</string>
+    <string name="fgs_text_idle">ಮುಂದಿನ ಪಾವತಿಗಾಗಿ ಕಾಯುತ್ತಿದೆ…</string>
+    <string name="fgs_action_mute">ಮ್ಯೂಟ್</string>
+    <string name="fgs_action_resume">ಮುಂದುವರಿಸಿ</string>
+
+    <!-- Bottom navigation -->
+    <string name="nav_home">ಮುಖಪುಟ</string>
+    <string name="nav_history">ಇತಿಹಾಸ</string>
+    <string name="nav_settings">ಸೆಟ್ಟಿಂಗ್‌ಗಳು</string>
+
+    <!-- Home screen -->
+    <string name="status_listening">ಆಲಿಸುತ್ತಿದೆ</string>
+    <string name="status_setup_needed">ಸೆಟಪ್ ಬೇಕು</string>
+    <string name="status_paused">ವಿರಾಮ</string>
+    <string name="status_stopped">ನಿಲ್ಲಿಸಲಾಗಿದೆ</string>
+    <string name="start_listening">ಆಲಿಸಲು ಪ್ರಾರಂಭಿಸಿ</string>
+    <string name="stop_listening">ನಿಲ್ಲಿಸಿ</string>
+    <string name="test_announcement">ಪರೀಕ್ಷಾ ಘೋಷಣೆ</string>
+    <string name="test_popup">ಪರೀಕ್ಷಾ ಪಾಪ್ಅಪ್</string>
+    <string name="open_settings">ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು ತೆರೆಯಿರಿ</string>
+    <string name="recent_transactions">ಇತ್ತೀಚಿನ</string>
+    <string name="see_all">ಎಲ್ಲಾ ನೋಡಿ</string>
+    <string name="no_transactions_yet">ಇನ್ನೂ ಯಾವುದೇ ವ್ಯವಹಾರಗಳಿಲ್ಲ — ಪರಿಶೀಲಿಸಲು ಸಣ್ಣ ಪರೀಕ್ಷಾ ಪಾವತಿ ಮಾಡಿ.</string>
+    <string name="label_today">ಇಂದು</string>
+    <string name="label_payments">ಪಾವತಿಗಳು</string>
+    <string name="label_last">ಕೊನೆಯ</string>
+    <string name="label_avg">ಸರಾಸರಿ</string>
+
+    <!-- History screen -->
+    <string name="history_title">ಇತಿಹಾಸ</string>
+    <string name="history_subtitle">ಈ ತಿಂಗಳು %1$d ಪಾವತಿಗಳನ್ನು ಘೋಷಿಸಲಾಗಿದೆ</string>
+    <string name="filter_all">ಎಲ್ಲಾ</string>
+    <string name="filter_today">ಇಂದು</string>
+    <string name="filter_this_week">ಈ ವಾರ</string>
+    <string name="filter_this_month">ಈ ತಿಂಗಳು</string>
+    <string name="status_spoken">ಹೇಳಲಾಗಿದೆ</string>
+    <string name="status_failed">ವಿಫಲ</string>
+    <string name="status_duplicate">ನಕಲು</string>
+
+    <!-- Settings screen -->
+    <string name="settings_title">ಸೆಟ್ಟಿಂಗ್‌ಗಳು</string>
+    <string name="settings_subtitle">ನೀವು ಏನು ಮತ್ತು ಯಾವಾಗ ಕೇಳುತ್ತೀರಿ ಎಂಬುದನ್ನು ಹೊಂದಿಸಿ.</string>
+    <string name="settings_group_announcement">ಘೋಷಣೆ</string>
+    <string name="settings_group_sound">ಧ್ವನಿ</string>
+    <string name="settings_group_display">ಪ್ರದರ್ಶನ</string>
+    <string name="settings_group_providers">ಒದಗಿಸುವವರು</string>
+    <string name="settings_group_permissions">ಅನುಮತಿಗಳು</string>
+    <string name="settings_group_language">ಭಾಷೆ</string>
+    <string name="settings_mode">ಮೋಡ್</string>
+    <string name="settings_mode_desc_single">ಒಂದು ಭಾಷೆ</string>
+    <string name="settings_mode_desc_dual">ಎರಡು ಭಾಷೆ</string>
+    <string name="settings_primary_lang">ಪ್ರಾಥಮಿಕ ಭಾಷೆ</string>
+    <string name="settings_second_lang">ಎರಡನೇ ಭಾಷೆ</string>
+    <string name="settings_second_lang_desc">ಡ್ಯುಯಲ್ ಮೋಡ್‌ನಲ್ಲಿ ಮಾತ್ರ ಬಳಸಲಾಗುತ್ತದೆ</string>
+    <string name="settings_alarm_volume">ಅಲಾರ್ಮ್ ವಾಲ್ಯೂಮ್ ಬಳಸಿ</string>
+    <string name="settings_alarm_volume_desc">ಗರಿಷ್ಠ ವಾಲ್ಯೂಮ್‌ನಲ್ಲಿ ಪ್ಲೇ ಆಗುತ್ತದೆ</string>
+    <string name="settings_announce_debits">ಡೆಬಿಟ್‌ಗಳನ್ನು ಘೋಷಿಸಿ</string>
+    <string name="settings_announce_debits_desc">ನೀವು ಹಣ ಕಳುಹಿಸಿದಾಗ ಹೇಳುತ್ತದೆ</string>
+    <string name="settings_payment_popup">ಪಾವತಿ ಪಾಪ್ಅಪ್</string>
+    <string name="settings_payment_popup_desc">ಪಾವತಿ ಬಂದಾಗ ಮೊತ್ತವನ್ನು ಪರದೆಯ ಮೇಲೆ ತೋರಿಸಿ</string>
+    <string name="settings_permission_status">ಅನುಮತಿ ಸ್ಥಿತಿ</string>
+    <string name="settings_permission_status_desc">%1$d ರಲ್ಲಿ %2$d ನೀಡಲಾಗಿದೆ</string>
+    <string name="settings_rerun_wizard">ಸೆಟಪ್ ವಿಝಾರ್ಡ್ ಮರು-ರನ್ ಮಾಡಿ</string>
+    <string name="settings_action_needed">ಕ್ರಮ ಅಗತ್ಯ</string>
+    <string name="settings_coming_soon">ಶೀಘ್ರದಲ್ಲಿ ಬರಲಿದೆ</string>
+    <string name="settings_soon_badge">ಶೀಘ್ರ</string>
+    <string name="settings_version">UPI ಪಾವತಿ ಸ್ಪೀಕರ್ · v%1$s</string>
+    <string name="settings_footer">ಭಾರತದಲ್ಲಿ ♥ ನಿಂದ ಮಾಡಲಾಗಿದೆ</string>
+    <string name="settings_app_language">ಆ್ಯಪ್ ಭಾಷೆ</string>
+    <string name="settings_app_language_desc">ಇಂಗ್ಲಿಷ್ / ಕನ್ನಡ</string>
+
+    <!-- Warning banners -->
+    <string name="warn_battery_title">ಬ್ಯಾಟರಿ ಆಪ್ಟಿಮೈಸೇಶನ್ ಆನ್ ಆಗಿದೆ</string>
+    <string name="warn_battery_desc">ಐಡಲ್ ಆಗಿರುವಾಗ ಘೋಷಣೆಗಳು ತಪ್ಪಬಹುದು.</string>
+    <string name="warn_fix">ಸರಿಪಡಿಸಿ</string>
+    <string name="warn_battery_opt_re_enabled">ಬ್ಯಾಟರಿ ಆಪ್ಟಿಮೈಸೇಶನ್ ಆನ್ ಆಗಿದೆ — ಘೋಷಣೆಗಳು ತಪ್ಪಬಹುದು. ಸರಿಪಡಿಸಲು ಟ್ಯಾಪ್ ಮಾಡಿ.</string>
+    <string name="warn_listener_unbound">ಅಧಿಸೂಚನೆ ಪ್ರವೇಶ ನಿಷ್ಕ್ರಿಯಗೊಂಡಿದೆ. ಸರಿಪಡಿಸಲು ಟ್ಯಾಪ್ ಮಾಡಿ.</string>
+    <string name="warn_restricted_bucket">ಸಿಸ್ಟಮ್ ಈ ಆ್ಯಪ್ ಅನ್ನು ನಿರ್ಬಂಧಿತ ಮೋಡ್‌ನಲ್ಲಿ ಇಟ್ಟಿದೆ. ಸಕ್ರಿಯವಾಗಿ ಇರಿಸಲು ದಿನಕ್ಕೊಮ್ಮೆ ಆ್ಯಪ್ ತೆರೆಯಿರಿ.</string>
+    <string name="warn_exact_alarm_revoked">ನಿಖರ ಅಲಾರ್ಮ್ ಅನುಮತಿ ರದ್ದಾಗಿದೆ. ಸರಿಪಡಿಸಲು ಟ್ಯಾಪ್ ಮಾಡಿ.</string>
+
+    <!-- Onboarding strings -->
+    <string name="onboarding_welcome_title">ಪ್ರತಿ UPI ಪಾವತಿಯನ್ನು ಕೇಳಿ</string>
+    <string name="onboarding_welcome_body">UPI ಪಾವತಿ ಅಧಿಸೂಚನೆ ಬಂದಾಗ ಈ ಆ್ಯಪ್ ಮೊತ್ತವನ್ನು ಜೋರಾಗಿ ಹೇಳುತ್ತದೆ — ಪರದೆ ಆಫ್ ಆಗಿದ್ದರೂ ಸಹ. ನಿಮ್ಮ ಫೋನ್‌ನಲ್ಲಿ ಇದನ್ನು ವಿಶ್ವಾಸಾರ್ಹವಾಗಿ ಮಾಡಲು ನಮಗೆ ಕೆಲವು ಅನುಮತಿಗಳು ಬೇಕು.</string>
+    <string name="onboarding_notif_listener_title">ಅಧಿಸೂಚನೆ\nಪ್ರವೇಶ ಅನುಮತಿಸಿ</string>
+    <string name="onboarding_notif_listener_body">ನಿಮ್ಮ UPI ಆ್ಯಪ್‌ಗಳಿಂದ (PhonePe, Google Pay, Paytm) ವ್ಯವಹಾರ ಅಧಿಸೂಚನೆಗಳನ್ನು ಓದಿ ಮೊತ್ತವನ್ನು ಜೋರಾಗಿ ಹೇಳುತ್ತೇವೆ.</string>
+    <string name="onboarding_notif_listener_privacy">ನಿಮ್ಮ ಸಾಧನದಿಂದ ಏನೂ ಕಳುಹಿಸಲಾಗುವುದಿಲ್ಲ.</string>
+    <string name="onboarding_notif_post_title">ಅಧಿಸೂಚನೆಗಳನ್ನು ಅನುಮತಿಸಿ</string>
+    <string name="onboarding_notif_post_body">ಆ್ಯಪ್ ಚಾಲನೆಯಲ್ಲಿರಲು ಸಣ್ಣ ಸ್ಥಿತಿ ಐಕಾನ್ ಟ್ರೇನಲ್ಲಿ ಇರುತ್ತದೆ.</string>
+    <string name="onboarding_exact_alarm_title">ನಿಖರ ಅಲಾರ್ಮ್\nಅನುಮತಿಸಿ</string>
+    <string name="onboarding_exact_alarm_body">ಲಿಸನರ್ ಇನ್ನೂ ಸಕ್ರಿಯವಾಗಿದೆ ಎಂದು ಪರಿಶೀಲಿಸಲು ನಮ್ಮ ವಾಚ್‌ಡಾಗ್ (ಪ್ರತಿ 30 ನಿಮಿಷ) ಬಳಸುತ್ತದೆ.</string>
+    <string name="onboarding_battery_title">ಬ್ಯಾಟರಿ\nಆಪ್ಟಿಮೈಸೇಶನ್ ಆಫ್ ಮಾಡಿ</string>
+    <string name="onboarding_battery_body">ನಿಮ್ಮ ಫೋನ್ ಇಲ್ಲದಿದ್ದರೆ ನಮ್ಮನ್ನು ನಿದ್ರೆಗೆ ಹಾಕಿ ವ್ಯವಹಾರಗಳನ್ನು ಮೌನವಾಗಿ ಬಿಡಬಹುದು.</string>
+    <string name="onboarding_oem_title">%1$s ಹಿನ್ನೆಲೆ ಸೆಟ್ಟಿಂಗ್‌ಗಳು</string>
+    <string name="onboarding_oem_body">%1$s ಸಾಮಾನ್ಯ Android ಮೇಲೆ ಹೆಚ್ಚುವರಿ ಹಿನ್ನೆಲೆ ನಿರ್ಬಂಧಗಳನ್ನು ಅನ್ವಯಿಸುತ್ತದೆ. ದಯವಿಟ್ಟು ಆಟೋಸ್ಟಾರ್ಟ್ ಸಕ್ರಿಯಗೊಳಿಸಿ ಮತ್ತು ಈ ಆ್ಯಪ್ ಅನ್ನು ಅನಿಯಂತ್ರಿತ ಬ್ಯಾಟರಿ ಪಟ್ಟಿಗೆ ಸೇರಿಸಿ — ಇದಿಲ್ಲದೆ, ಘೋಷಣೆಗಳು ತಪ್ಪಬಹುದು.</string>
+    <string name="onboarding_vivo_extra_title">Vivo: ಹೆಚ್ಚುವರಿ ಹಂತಗಳು</string>
+    <string name="onboarding_vivo_extra_body">1. ರೀಸೆಂಟ್ಸ್ ಸ್ಕ್ರೀನ್ ತೆರೆಯಿರಿ, ಈ ಆ್ಯಪ್ ಮೇಲೆ ಕೆಳಗೆ ಸ್ವೈಪ್ ಮಾಡಿ, ಮತ್ತು iManager ಅದನ್ನು ಸ್ವೀಪ್ ಮಾಡದಂತೆ ಲಾಕ್ ಐಕಾನ್ ಟ್ಯಾಪ್ ಮಾಡಿ.\n\n2. ಸೆಟ್ಟಿಂಗ್‌ಗಳು → ಬ್ಯಾಟರಿ → ಹಿನ್ನೆಲೆ ವಿದ್ಯುತ್ ಬಳಕೆ ನಿರ್ವಹಣೆ → ಈ ಆ್ಯಪ್ ಅನ್ನು \"ಹಿನ್ನೆಲೆ ಹೆಚ್ಚಿನ ವಿದ್ಯುತ್ ಬಳಕೆ ಅನುಮತಿಸಿ\" ಎಂದು ಹೊಂದಿಸಿ.</string>
+    <string name="onboarding_test_title">ಪರೀಕ್ಷಾ\nಘೋಷಣೆ ಮಾಡಿ</string>
+    <string name="onboarding_test_body">ಕೆಳಗಿನ ಬಟನ್ ಟ್ಯಾಪ್ ಮಾಡಿ — ನೀವು \"ಪರೀಕ್ಷೆ: ಇನ್ನೂರ ಐವತ್ತು ರೂಪಾಯಿ ಬಂದಿದೆ\" ಎಂದು ಕೇಳಬೇಕು. ಇದು ಸಿಸ್ಟಮ್‌ಗೆ ನಮ್ಮ ಆಡಿಯೋ ಸೇವೆಯನ್ನು ನೆನಪಿಟ್ಟುಕೊಳ್ಳಲು ಸಹಾಯ ಮಾಡುತ್ತದೆ.</string>
+    <string name="step_of">ಹಂತ %1$d / %2$d</string>
+    <string name="skip">ಬಿಡಿ</string>
+    <string name="grant_permission">ಅನುಮತಿ ನೀಡಿ</string>
+    <string name="open_oem_setting">ಸೆಟ್ಟಿಂಗ್ ತೆರೆಯಿರಿ</string>
+    <string name="finish">ಮುಗಿಯಿತು</string>
+
+    <!-- Payment popup -->
+    <string name="popup_payment_received">ಪಾವತಿ ಬಂದಿದೆ</string>
+    <string name="popup_via">ಮೂಲಕ</string>
+    <string name="popup_time">ಸಮಯ</string>
+
+    <!-- TTS settings -->
+    <string name="tts_settings_title">TTS ಸೆಟ್ಟಿಂಗ್‌ಗಳು</string>
+    <string name="tts_primary_language">ಪ್ರಾಥಮಿಕ ಭಾಷೆ</string>
+    <string name="tts_second_language">ಎರಡನೇ ಭಾಷೆ</string>
+    <string name="tts_mode_label">ಘೋಷಣೆ ಮೋಡ್</string>
+    <string name="tts_mode_single">ಒಂದು ಭಾಷೆ</string>
+    <string name="tts_mode_dual">ಎರಡು ಭಾಷೆ (ಒಂದರ ನಂತರ ಒಂದು)</string>
+    <string name="tts_show_popup">ಪಾವತಿ ಪಾಪ್ಅಪ್ ತೋರಿಸಿ</string>
+
+    <!-- Test announcement -->
+    <string name="tts_test_amount">ಪರೀಕ್ಷೆ: ಇನ್ನೂರ ಐವತ್ತು ರೂಪಾಯಿ ಬಂದಿದೆ</string>
+</resources>

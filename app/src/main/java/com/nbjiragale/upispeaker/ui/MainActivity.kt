@@ -1,19 +1,28 @@
 package com.nbjiragale.upispeaker.ui
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import com.nbjiragale.upispeaker.R
 import com.nbjiragale.upispeaker.data.Settings
 import com.nbjiragale.upispeaker.databinding.ActivityMainBinding
-import com.nbjiragale.upispeaker.oem.RestrictionDetector
-import com.nbjiragale.upispeaker.service.SpeakerForegroundService
+import com.nbjiragale.upispeaker.util.LocaleHelper
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var settings: Settings
-    private lateinit var detector: RestrictionDetector
+
+    private val homeFragment by lazy { HomeFragment() }
+    private val historyFragment by lazy { HistoryFragment() }
+    private val settingsFragment by lazy { SettingsFragment() }
+
+    override fun attachBaseContext(newBase: Context) {
+        val tag = Settings(newBase).appLocaleTag
+        super.attachBaseContext(LocaleHelper.applyLocale(newBase, tag))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,7 +30,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         settings = Settings(this)
-        detector = RestrictionDetector(this)
 
         if (!settings.onboardingCompleted) {
             startActivity(Intent(this, OnboardingActivity::class.java))
@@ -29,60 +37,31 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        binding.btnToggle.setOnClickListener { toggleListening() }
-        binding.btnTest.setOnClickListener {
-            if (!settings.listeningEnabled) toggleListening()
-            SpeakerForegroundService.test(this)
-        }
-        binding.btnSettings.setOnClickListener {
-            startActivity(Intent(this, OnboardingActivity::class.java))
+        setupBottomNav()
+
+        if (savedInstanceState == null) {
+            showFragment(homeFragment)
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        refreshUi()
+    private fun setupBottomNav() {
+        binding.bottomNav.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_home -> { showFragment(homeFragment); true }
+                R.id.nav_history -> { showFragment(historyFragment); true }
+                R.id.nav_settings -> { showFragment(settingsFragment); true }
+                else -> false
+            }
+        }
     }
 
-    private fun toggleListening() {
-        val newState = !settings.listeningEnabled
-        settings.listeningEnabled = newState
-        if (newState) {
-            SpeakerForegroundService.start(this)
-        } else {
-            SpeakerForegroundService.stop(this)
-        }
-        refreshUi()
+    private fun showFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragmentContainer, fragment)
+            .commit()
     }
 
-    private fun refreshUi() {
-        val state = detector.snapshot()
-
-        val statusText = when {
-            !settings.listeningEnabled -> getString(R.string.status_setup_needed)
-            settings.isMuted() -> getString(R.string.status_paused)
-            else -> getString(R.string.status_listening)
-        }
-        binding.tvStatus.text = statusText
-
-        val warning: String? = when {
-            !state.notificationListenerEnabled -> getString(R.string.warn_listener_unbound)
-            !state.exactAlarmGranted -> getString(R.string.warn_exact_alarm_revoked)
-            !state.ignoringBatteryOptimisations -> getString(R.string.warn_battery_opt_re_enabled)
-            state.isRestrictedBucket -> getString(R.string.warn_restricted_bucket)
-            else -> null
-        }
-        if (warning == null) {
-            binding.tvWarning.visibility = android.view.View.GONE
-        } else {
-            binding.tvWarning.visibility = android.view.View.VISIBLE
-            binding.tvWarning.text = warning
-        }
-
-        binding.btnToggle.text = if (settings.listeningEnabled) {
-            getString(R.string.stop_listening)
-        } else {
-            getString(R.string.start_listening)
-        }
+    fun navigateToHistory() {
+        binding.bottomNav.selectedItemId = R.id.nav_history
     }
 }

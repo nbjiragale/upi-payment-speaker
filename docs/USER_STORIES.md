@@ -220,6 +220,67 @@ Conventions:
 
 ---
 
+## Milestone 2b — UX Enhancements
+
+> These features were identified as high-value additions after Milestone 2 implementation. They improve the core UX for merchants and add a competitive differentiator (fake payment detection).
+
+### M2b-S1 — Repeat last announcement
+- **As a** shopkeeper in a noisy environment
+- **I want** to re-hear the last payment announcement by tapping a button or shaking my phone
+- **So that** I don't have to check my phone screen when I miss an announcement
+- **AC**
+  - FAB (Floating Action Button) on home screen replays the last announcement via TTS.
+  - Shake gesture triggers replay (configurable sensitivity: Off / Low / Medium / High).
+  - "Repeat" action button is available on the persistent foreground notification.
+  - If no announcements exist yet, a toast shows "No announcements yet".
+  - Replay uses the same language, volume, and TTS settings as the original announcement.
+- **Refs** DESIGN §4.6
+
+### M2b-S2 — Distinct chime before TTS
+- **As a** shopkeeper
+- **I want** a distinctive chime/sound before the TTS speaks the amount
+- **So that** I immediately know a payment came in, even before I hear the amount
+- **AC**
+  - A short chime (200–500ms) plays before every TTS announcement on `STREAM_ALARM`.
+  - User can choose from built-in chimes: Classic, Cash Register, Digital, Coin Drop, or import a custom sound.
+  - Chime picker UI shows a bottom sheet with preview playback for each option.
+  - Optional: amount-based intensity — single chime for < ₹1,000, double for ₹1,000–₹9,999, triple for ₹10,000+.
+  - "None" option disables the chime entirely.
+  - Chime respects the same volume stream as TTS (STREAM_ALARM).
+- **Refs** DESIGN §4.7
+
+### M2b-S3 — Daily summary
+- **As a** shopkeeper
+- **I want** an automatic end-of-day summary of all payments received
+- **So that** I can quickly know my total earnings without manually counting
+- **AC**
+  - At a configurable time (default 9 PM), the app posts a summary notification: "Today: ₹X received • N payments".
+  - Optional TTS: app speaks the summary aloud at the configured time.
+  - Summary detail screen shows: total amount, payment count, breakdown by provider, largest/smallest/average.
+  - "Share Summary" button generates a text summary and opens Android share sheet (WhatsApp, SMS, etc.).
+  - Historical summaries are viewable from the History tab.
+  - If no payments were received, summary reads: "No payments received today".
+  - Settings: daily summary toggle, time picker, speak-summary toggle.
+- **Refs** DESIGN §4.8
+
+### M2b-S4 — Fake payment detection
+- **As a** shopkeeper
+- **I want** to be warned when a payment notification looks suspicious or fake
+- **So that** I don't hand over goods for a fraudulent transaction
+- **AC**
+  - App verifies that notification source package matches known genuine UPI app packages.
+  - App validates notification structure (extras format) against expected patterns for each provider.
+  - Suspicious notifications trigger a distinct warning popup: red border, "⚠ VERIFY PAYMENT" header, reason for suspicion, and "Open [App]" button to verify in the real UPI app.
+  - Warning TTS announcement plays: "Warning! This payment may not be genuine. Please verify in your UPI app." with 3 short warning beeps instead of the normal chime.
+  - Warning popup does NOT auto-dismiss — merchant must manually dismiss or open the UPI app.
+  - Suspicious transactions are flagged as "Unverified ⚠" in the transaction log.
+  - User can whitelist unrecognized apps to suppress future alerts from that source.
+  - Configurable sensitivity: Low (unknown packages only), Medium (+ malformed structure), High (+ pattern mismatches + rapid duplicates).
+  - Settings: detection toggle, sensitivity dropdown, under a "SECURITY" section.
+- **Refs** DESIGN §4.9
+
+---
+
 ## Cross-cutting / non-goals (v1)
 
 - **Cloud sync** of transaction log — explicitly out of scope.

@@ -97,6 +97,70 @@ class TransactionLog(context: Context) {
         }
     }
 
+    fun countSince(sinceMs: Long): Int {
+        helper.readableDatabase.rawQuery(
+            "SELECT COUNT(*) FROM transactions WHERE timestamp_ms >= ?",
+            arrayOf(sinceMs.toString())
+        ).use { c ->
+            return if (c.moveToFirst()) c.getInt(0) else 0
+        }
+    }
+
+    fun totalPaiseSince(sinceMs: Long): Long {
+        helper.readableDatabase.rawQuery(
+            "SELECT COALESCE(SUM(amount_paise), 0) FROM transactions WHERE timestamp_ms >= ? AND direction = 'CREDIT'",
+            arrayOf(sinceMs.toString())
+        ).use { c ->
+            return if (c.moveToFirst()) c.getLong(0) else 0L
+        }
+    }
+
+    data class LogEntry(
+        val amountPaise: Long,
+        val source: String,
+        val timestampMs: Long,
+        val status: String,
+        val direction: String
+    )
+
+    fun getRecent(limit: Int): List<LogEntry> {
+        val entries = mutableListOf<LogEntry>()
+        helper.readableDatabase.rawQuery(
+            "SELECT amount_paise, source, timestamp_ms, status, direction FROM transactions ORDER BY timestamp_ms DESC LIMIT ?",
+            arrayOf(limit.toString())
+        ).use { c ->
+            while (c.moveToNext()) {
+                entries.add(LogEntry(
+                    amountPaise = c.getLong(0),
+                    source = c.getString(1),
+                    timestampMs = c.getLong(2),
+                    status = c.getString(3),
+                    direction = c.getString(4)
+                ))
+            }
+        }
+        return entries
+    }
+
+    fun getAllSince(sinceMs: Long): List<LogEntry> {
+        val entries = mutableListOf<LogEntry>()
+        helper.readableDatabase.rawQuery(
+            "SELECT amount_paise, source, timestamp_ms, status, direction FROM transactions WHERE timestamp_ms >= ? ORDER BY timestamp_ms DESC",
+            arrayOf(sinceMs.toString())
+        ).use { c ->
+            while (c.moveToNext()) {
+                entries.add(LogEntry(
+                    amountPaise = c.getLong(0),
+                    source = c.getString(1),
+                    timestampMs = c.getLong(2),
+                    status = c.getString(3),
+                    direction = c.getString(4)
+                ))
+            }
+        }
+        return entries
+    }
+
     private fun todayStartMillis(): Long {
         val cal = java.util.Calendar.getInstance()
         cal.set(java.util.Calendar.HOUR_OF_DAY, 0)

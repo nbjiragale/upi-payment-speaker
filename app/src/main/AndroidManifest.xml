@@ -54,6 +54,12 @@
             android:name=".ui.OnboardingActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".ui.PaymentPopupActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:theme="@style/Theme.UpiSpeaker.Popup" />
+
         <!--  ===========================================================  -->
         <!--   Foreground service — type=mediaPlayback                     -->
         <!--                                                               -->
