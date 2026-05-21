@@ -5,9 +5,10 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/background"
+    android:fitsSystemWindows="true"
     android:paddingStart="24dp"
     android:paddingEnd="24dp"
-    android:paddingTop="8dp"
+    android:paddingTop="16dp"
     android:paddingBottom="24dp">
 
     <!-- Step header: pill + skip -->

@@ -11,8 +11,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingTop="8dp"
-        android:paddingBottom="24dp">
+        android:paddingTop="16dp"
+        android:paddingBottom="24dp"
+        android:clipToPadding="false">
 
         <!-- Header -->
         <LinearLayout
@@ -20,8 +21,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-            android:layout_marginTop="4dp">
+            android:paddingEnd="20dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -37,7 +37,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="13.5sp"
                 android:textColor="@color/fg_muted"
-                android:layout_marginTop="2dp"
+                android:layout_marginTop="4dp"
                 tools:text="132 payments announced this month" />
         </LinearLayout>
 
@@ -68,12 +68,14 @@
             android:padding="16dp"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
-            android:layout_marginTop="14dp">
+            android:layout_marginTop="14dp"
+            android:baselineAligned="false">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_marginEnd="16dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -89,14 +91,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:gravity="bottom"
+                    android:gravity="center_vertical"
                     android:layout_marginTop="2dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="₹"
-                        android:textSize="22sp"
+                        android:textSize="20sp"
                         android:textStyle="bold"
                         android:textColor="@color/accent"
                         android:fontFamily="monospace" />
@@ -105,7 +107,7 @@
                         android:id="@+id/tvHistoryTotal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="22sp"
+                        android:textSize="20sp"
                         android:textStyle="bold"
                         android:textColor="@color/fg"
                         android:fontFamily="monospace"
@@ -117,7 +119,6 @@
                 android:layout_width="1dp"
                 android:layout_height="36dp"
                 android:background="@color/border"
-                android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp" />
 
             <!-- Bars placeholder -->
@@ -130,12 +131,26 @@
                 android:gravity="bottom" />
         </LinearLayout>
 
-        <!-- Transaction groups will be added programmatically -->
+        <!-- Transaction groups container -->
         <LinearLayout
             android:id="@+id/transactionGroups"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" />
+            android:orientation="vertical"
+            android:layout_marginTop="8dp" />
+
+        <!-- Empty state -->
+        <TextView
+            android:id="@+id/tvHistoryEmpty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="@color/fg_muted"
+            android:text="@string/no_transactions_yet"
+            android:gravity="center"
+            android:padding="32dp"
+            android:layout_marginTop="16dp"
+            android:visibility="gone" />
 
     </LinearLayout>
 </ScrollView>

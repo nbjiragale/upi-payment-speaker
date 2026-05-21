@@ -13,6 +13,10 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.nbjiragale.upispeaker.R
 import com.nbjiragale.upispeaker.data.TransactionLog
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 class HistoryFragment : Fragment() {
 
@@ -27,15 +31,25 @@ class HistoryFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         txLog = TransactionLog(requireContext())
 
-        setupSubtitle(view)
         setupChips(view)
+        refreshData(view)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        view?.let { refreshData(it) }
+    }
+
+    private fun refreshData(view: View) {
+        setupSubtitle(view)
         setupSummaryCard(view)
         setupSparklineBars(view)
         buildTransactionGroups(view)
     }
 
     private fun setupSubtitle(view: View) {
-        val count = txLog.countToday()
+        val sinceMs = getFilterStartMs()
+        val count = txLog.countSince(sinceMs)
         view.findViewById<TextView>(R.id.tvHistorySubtitle).text =
             getString(R.string.history_subtitle, count)
     }
@@ -73,9 +87,12 @@ class HistoryFragment : Fragment() {
                     setTextColor(ContextCompat.getColor(ctx, R.color.fg_muted))
                 }
 
-                setOnClickListener {
+                setOnClickListener { _ ->
                     activeFilter = id
-                    view?.let { setupChips(it) }
+                    getView()?.let { v ->
+                        setupChips(v)
+                        refreshData(v)
+                    }
                 }
             }
             container.addView(chip)
@@ -83,7 +100,8 @@ class HistoryFragment : Fragment() {
     }
 
     private fun setupSummaryCard(view: View) {
-        view.findViewById<TextView>(R.id.tvHistoryTotal).text = "0"
+        val todayTotal = txLog.totalPaiseSince(todayStartMillis())
+        view.findViewById<TextView>(R.id.tvHistoryTotal).text = formatIndianNumber(todayTotal / 100)
     }
 
     private fun setupSparklineBars(view: View) {
@@ -92,25 +110,36 @@ class HistoryFragment : Fragment() {
         val ctx = requireContext()
         val dp = ctx.resources.displayMetrics.density
 
-        val barData = listOf(0.3f, 0.5f, 0.8f, 0.4f, 0.9f, 0.6f, 1.0f, 0.7f, 0.2f, 0.5f, 0.3f, 0.45f)
+        // Build 7-day sparkline from real data
+        val dailyTotals = mutableListOf<Long>()
+        for (i in 6 downTo 0) {
+            val dayCal = Calendar.getInstance().apply {
+                add(Calendar.DAY_OF_YEAR, -i)
+                set(Calendar.HOUR_OF_DAY, 0); set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0); set(Calendar.MILLISECOND, 0)
+            }
+            val dayStart = dayCal.timeInMillis
+            val total = txLog.totalPaiseSince(dayStart)
+            dailyTotals.add(total)
+        }
+        val maxVal = dailyTotals.maxOrNull()?.coerceAtLeast(1L) ?: 1L
         val maxH = 36f * dp
 
-        for (value in barData) {
+        for (value in dailyTotals) {
+            val fraction = value.toFloat() / maxVal
             val bar = View(ctx).apply {
-                val h = (value * maxH).toInt().coerceAtLeast((2 * dp).toInt())
+                val h = (fraction * maxH).toInt().coerceAtLeast((2 * dp).toInt())
                 layoutParams = LinearLayout.LayoutParams(
-                    0,
-                    h,
-                    1f
+                    0, h, 1f
                 ).apply {
-                    marginStart = (1.5f * dp).toInt()
-                    marginEnd = (1.5f * dp).toInt()
+                    marginStart = (2 * dp).toInt()
+                    marginEnd = (2 * dp).toInt()
                     gravity = Gravity.BOTTOM
                 }
                 val bg = GradientDrawable().apply {
                     cornerRadius = 2f * dp
                     setColor(ContextCompat.getColor(ctx, R.color.primary))
-                    alpha = (value * 255).toInt().coerceIn(80, 255)
+                    alpha = if (fraction > 0.01f) (fraction * 255).toInt().coerceIn(80, 255) else 40
                 }
                 background = bg
             }
@@ -124,13 +153,27 @@ class HistoryFragment : Fragment() {
         val ctx = requireContext()
         val dp = ctx.resources.displayMetrics.density
 
-        val groups = getSampleTransactionGroups()
-        if (groups.isEmpty()) return
+        val sinceMs = getFilterStartMs()
+        val entries = txLog.getAllSince(sinceMs)
 
-        for (group in groups) {
-            // Date header
+        val emptyView = view.findViewById<TextView>(R.id.tvHistoryEmpty)
+        if (entries.isEmpty()) {
+            emptyView?.visibility = View.VISIBLE
+            return
+        }
+        emptyView?.visibility = View.GONE
+
+        // Group by date
+        val dateFormat = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+        val timeFormat = SimpleDateFormat("h:mm a", Locale.getDefault())
+        val grouped = entries.groupBy { dateFormat.format(Date(it.timestampMs)) }
+
+        for ((dateLabel, txns) in grouped) {
+            val today = dateFormat.format(Date())
+            val displayLabel = if (dateLabel == today) "Today" else dateLabel
+
             val header = TextView(ctx).apply {
-                text = group.dateLabel
+                text = displayLabel.uppercase()
                 textSize = 12f
                 setTextColor(ContextCompat.getColor(ctx, R.color.fg_dim))
                 setTypeface(typeface, android.graphics.Typeface.BOLD)
@@ -139,7 +182,6 @@ class HistoryFragment : Fragment() {
             }
             container.addView(header)
 
-            // Card for this group
             val card = LinearLayout(ctx).apply {
                 orientation = LinearLayout.VERTICAL
                 val cardParams = LinearLayout.LayoutParams(
@@ -153,26 +195,36 @@ class HistoryFragment : Fragment() {
                 setBackgroundResource(R.drawable.bg_card_18)
             }
 
-            for ((i, tx) in group.transactions.withIndex()) {
-                val itemView = LayoutInflater.from(ctx).inflate(R.layout.item_transaction, card, false)
-                bindTransactionItem(itemView, tx)
+            for ((i, entry) in txns.withIndex()) {
+                val rupees = entry.amountPaise / 100
+                val timeStr = timeFormat.format(Date(entry.timestampMs))
+                val statusStr = when (entry.status) {
+                    "SPOKEN" -> "spoken"
+                    "FAILED_TTS", "FAILED_AUDIO_FOCUS" -> "failed"
+                    "DUPLICATE" -> "duplicate"
+                    else -> "spoken"
+                }
+                val sourceName = entry.source.lowercase().replaceFirstChar { it.uppercase() }
+                val item = HomeFragment.TransactionItem(
+                    formatIndianNumber(rupees), sourceName, timeStr, statusStr
+                )
 
-                // Divider between items
-                if (i < group.transactions.size - 1) {
+                val itemView = LayoutInflater.from(ctx).inflate(R.layout.item_transaction, card, false)
+                bindTransactionItem(itemView, item)
+
+                card.addView(itemView)
+                if (i < txns.size - 1) {
                     val divider = View(ctx).apply {
                         layoutParams = LinearLayout.LayoutParams(
                             LinearLayout.LayoutParams.MATCH_PARENT,
                             (1 * dp).toInt()
                         ).apply {
-                            marginStart = (64 * dp).toInt()
+                            marginStart = (60 * dp).toInt()
                             marginEnd = (16 * dp).toInt()
                         }
                         setBackgroundColor(ContextCompat.getColor(ctx, R.color.border))
                     }
-                    card.addView(itemView)
                     card.addView(divider)
-                } else {
-                    card.addView(itemView)
                 }
             }
             container.addView(card)
@@ -217,13 +269,48 @@ class HistoryFragment : Fragment() {
         }
     }
 
-    private data class TransactionGroup(
-        val dateLabel: String,
-        val transactions: List<HomeFragment.TransactionItem>
-    )
+    private fun getFilterStartMs(): Long {
+        val cal = Calendar.getInstance()
+        return when (activeFilter) {
+            "today" -> {
+                cal.set(Calendar.HOUR_OF_DAY, 0); cal.set(Calendar.MINUTE, 0)
+                cal.set(Calendar.SECOND, 0); cal.set(Calendar.MILLISECOND, 0)
+                cal.timeInMillis
+            }
+            "week" -> {
+                cal.set(Calendar.DAY_OF_WEEK, cal.firstDayOfWeek)
+                cal.set(Calendar.HOUR_OF_DAY, 0); cal.set(Calendar.MINUTE, 0)
+                cal.set(Calendar.SECOND, 0); cal.set(Calendar.MILLISECOND, 0)
+                cal.timeInMillis
+            }
+            "month" -> {
+                cal.set(Calendar.DAY_OF_MONTH, 1)
+                cal.set(Calendar.HOUR_OF_DAY, 0); cal.set(Calendar.MINUTE, 0)
+                cal.set(Calendar.SECOND, 0); cal.set(Calendar.MILLISECOND, 0)
+                cal.timeInMillis
+            }
+            else -> 0L // "all"
+        }
+    }
 
-    private fun getSampleTransactionGroups(): List<TransactionGroup> {
-        // Empty state — real data comes from TransactionLog
-        return emptyList()
+    private fun todayStartMillis(): Long {
+        val cal = Calendar.getInstance()
+        cal.set(Calendar.HOUR_OF_DAY, 0)
+        cal.set(Calendar.MINUTE, 0)
+        cal.set(Calendar.SECOND, 0)
+        cal.set(Calendar.MILLISECOND, 0)
+        return cal.timeInMillis
+    }
+
+    private fun formatIndianNumber(n: Long): String {
+        if (n < 1000) return n.toString()
+        val last3 = (n % 1000).toString().padStart(3, '0')
+        var rest = n / 1000
+        val parts = mutableListOf(last3)
+        while (rest > 0) {
+            parts.add(0, (rest % 100).toString().let { if (parts.size > 1) it.padStart(2, '0') else it })
+            rest /= 100
+        }
+        return parts.joinToString(",")
     }
 }

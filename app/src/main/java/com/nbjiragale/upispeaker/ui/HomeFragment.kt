@@ -82,12 +82,12 @@ class HomeFragment : Fragment() {
             dotContainer.visibility = View.GONE
         }
 
+        val todayStart = todayStartMillis()
         val count = txLog.countToday()
+        val todayTotal = txLog.totalPaiseSince(todayStart)
+
         view.findViewById<TextView>(R.id.tvPaymentCount).text = count.toString()
-
-        val todayTotal = getTodayTotal()
         view.findViewById<TextView>(R.id.tvTodayTotal).text = formatIndianNumber(todayTotal / 100)
-
         view.findViewById<TextView>(R.id.tvLastPayment).text = getLastPaymentTime() ?: "—"
 
         val avg = if (count > 0) todayTotal / count / 100 else 0L
@@ -138,7 +138,20 @@ class HomeFragment : Fragment() {
         val rv = view.findViewById<RecyclerView>(R.id.rvRecentTransactions)
         val emptyView = view.findViewById<TextView>(R.id.tvEmpty)
 
-        val transactions = getRecentTransactions(3)
+        val entries = txLog.getRecent(5)
+        val transactions = entries.map { entry ->
+            val rupees = entry.amountPaise / 100
+            val timeStr = SimpleDateFormat("h:mm a", Locale.getDefault()).format(Date(entry.timestampMs))
+            val statusStr = when (entry.status) {
+                "SPOKEN" -> "spoken"
+                "FAILED_TTS", "FAILED_AUDIO_FOCUS" -> "failed"
+                "DUPLICATE" -> "duplicate"
+                else -> "spoken"
+            }
+            val sourceName = entry.source.lowercase().replaceFirstChar { it.uppercase() }
+            TransactionItem(formatIndianNumber(rupees), sourceName, timeStr, statusStr)
+        }
+
         if (transactions.isEmpty()) {
             rv.visibility = View.GONE
             emptyView.visibility = View.VISIBLE
@@ -182,25 +195,19 @@ class HomeFragment : Fragment() {
         setupRecentTransactions(view)
     }
 
-    private fun getTodayTotal(): Long {
-        try {
-            val db = TransactionLog(requireContext())
-            val startOfDay = Calendar.getInstance().apply {
-                set(Calendar.HOUR_OF_DAY, 0); set(Calendar.MINUTE, 0)
-                set(Calendar.SECOND, 0); set(Calendar.MILLISECOND, 0)
-            }.timeInMillis
-            return 0L // Will be populated when real transactions exist
-        } catch (e: Exception) {
-            return 0L
-        }
+    private fun todayStartMillis(): Long {
+        val cal = Calendar.getInstance()
+        cal.set(Calendar.HOUR_OF_DAY, 0)
+        cal.set(Calendar.MINUTE, 0)
+        cal.set(Calendar.SECOND, 0)
+        cal.set(Calendar.MILLISECOND, 0)
+        return cal.timeInMillis
     }
 
     private fun getLastPaymentTime(): String? {
-        return null // Will be populated when real transactions exist
-    }
-
-    private fun getRecentTransactions(limit: Int): List<TransactionItem> {
-        return emptyList() // Will be populated when real transactions exist
+        val entries = txLog.getRecent(1)
+        if (entries.isEmpty()) return null
+        return SimpleDateFormat("h:mm a", Locale.getDefault()).format(Date(entries[0].timestampMs))
     }
 
     private fun formatIndianNumber(n: Long): String {
@@ -267,11 +274,6 @@ class HomeFragment : Fragment() {
                     holder.status.text = getString(R.string.status_duplicate)
                     holder.status.setTextColor(ContextCompat.getColor(requireContext(), R.color.fg_dim))
                 }
-            }
-
-            // Add divider except for last item
-            if (position < items.size - 1) {
-                holder.itemView.setBackgroundResource(0)
             }
         }
 
