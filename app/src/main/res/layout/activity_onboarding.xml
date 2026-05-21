@@ -1,178 +1,196 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/rootLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/background"
-    android:fitsSystemWindows="true"
-    android:paddingStart="28dp"
-    android:paddingEnd="28dp"
-    android:paddingTop="20dp"
-    android:paddingBottom="32dp">
+    android:fitsSystemWindows="true">
 
-    <!-- Step header: pill + skip -->
     <LinearLayout
+        android:id="@+id/rootLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="24dp">
 
-        <!-- Step pill -->
+        <!-- Step header: pill + skip -->
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:background="@drawable/bg_step_pill"
-            android:paddingStart="8dp"
-            android:paddingEnd="12dp"
-            android:paddingTop="6dp"
-            android:paddingBottom="6dp">
+            android:gravity="center_vertical">
 
-            <TextView
-                android:id="@+id/tvStepNumber"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:gravity="center"
-                android:textSize="10sp"
-                android:textStyle="bold"
-                android:textColor="@color/primary"
-                android:fontFamily="monospace"
-                android:background="@drawable/bg_step_number"
-                tools:text="3" />
-
-            <TextView
-                android:id="@+id/tvStepIndicator"
+            <!-- Step pill -->
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:textSize="12sp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/bg_step_pill"
+                android:paddingStart="8dp"
+                android:paddingEnd="12dp"
+                android:paddingTop="6dp"
+                android:paddingBottom="6dp">
+
+                <TextView
+                    android:id="@+id/tvStepNumber"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:gravity="center"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/primary"
+                    android:fontFamily="monospace"
+                    android:background="@drawable/bg_step_number"
+                    tools:text="3" />
+
+                <TextView
+                    android:id="@+id/tvStepIndicator"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:textSize="12sp"
+                    android:textColor="@color/fg_muted"
+                    tools:text="Step 3 of 7" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/btnSkip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="13sp"
+                android:textStyle="bold"
                 android:textColor="@color/fg_muted"
-                tools:text="Step 3 of 7" />
+                android:text="@string/skip"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="8dp" />
         </LinearLayout>
 
-        <View
-            android:layout_width="0dp"
+        <!-- Scrollable content area -->
+        <ScrollView
+            android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:fillViewport="true"
+            android:scrollbars="none">
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- Illustration area -->
+                <FrameLayout
+                    android:id="@+id/illustrationContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:layout_marginTop="28dp"
+                    android:layout_marginBottom="24dp"
+                    android:background="@drawable/bg_onboarding_illustration">
+
+                    <!-- Notification card illustration (built in code) -->
+                </FrameLayout>
+
+                <!-- Title -->
+                <TextView
+                    android:id="@+id/tvTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/fg"
+                    android:lineSpacingMultiplier="1.2"
+                    tools:text="Allow notification\naccess" />
+
+                <!-- Body -->
+                <TextView
+                    android:id="@+id/tvBody"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:textSize="14.5sp"
+                    android:textColor="@color/fg_muted"
+                    android:lineSpacingMultiplier="1.5"
+                    tools:text="We read transaction notifications from your UPI apps and speak the amount out loud." />
+
+                <!-- Privacy note -->
+                <LinearLayout
+                    android:id="@+id/privacyNote"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="14dp"
+                    android:visibility="gone"
+                    tools:visibility="visible">
+
+                    <ImageView
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:src="@android:drawable/ic_lock_idle_lock"
+                        android:tint="@color/primary"
+                        android:contentDescription="Privacy" />
+
+                    <TextView
+                        android:id="@+id/tvPrivacy"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:textSize="12.5sp"
+                        android:textColor="@color/primary"
+                        android:text="@string/onboarding_notif_listener_privacy" />
+                </LinearLayout>
+
+            </LinearLayout>
+        </ScrollView>
+
+        <!-- Permission status indicator -->
         <TextView
-            android:id="@+id/btnSkip"
-            android:layout_width="wrap_content"
+            android:id="@+id/tvPermissionStatus"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:textSize="13sp"
-            android:textStyle="bold"
-            android:textColor="@color/fg_muted"
-            android:text="@string/skip"
-            android:clickable="true"
-            android:focusable="true"
-            android:padding="8dp" />
-    </LinearLayout>
-
-    <!-- Illustration area -->
-    <FrameLayout
-        android:id="@+id/illustrationContainer"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_marginTop="36dp"
-        android:layout_marginBottom="32dp"
-        android:background="@drawable/bg_onboarding_illustration">
-
-        <!-- Notification card illustration (built in code) -->
-    </FrameLayout>
-
-    <!-- Title -->
-    <TextView
-        android:id="@+id/tvTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:textColor="@color/fg"
-        android:lineSpacingMultiplier="1.2"
-        tools:text="Allow notification\naccess" />
-
-    <!-- Body -->
-    <TextView
-        android:id="@+id/tvBody"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="14dp"
-        android:textSize="14.5sp"
-        android:textColor="@color/fg_muted"
-        android:lineSpacingMultiplier="1.5"
-        tools:text="We read transaction notifications from your UPI apps and speak the amount out loud." />
-
-    <!-- Privacy note -->
-    <LinearLayout
-        android:id="@+id/privacyNote"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginTop="14dp"
-        android:visibility="gone"
-        tools:visibility="visible">
-
-        <ImageView
-            android:layout_width="14dp"
-            android:layout_height="14dp"
-            android:src="@android:drawable/ic_lock_idle_lock"
-            android:tint="@color/primary"
-            android:contentDescription="Privacy" />
-
-        <TextView
-            android:id="@+id/tvPrivacy"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:textSize="12.5sp"
             android:textColor="@color/primary"
-            android:text="@string/onboarding_notif_listener_privacy" />
+            android:visibility="gone"
+            android:layout_marginBottom="12dp"
+            android:layout_marginTop="8dp"
+            tools:text="Permission granted!"
+            tools:visibility="visible" />
+
+        <!-- Primary button -->
+        <Button
+            android:id="@+id/btnPrimary"
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/bg_btn_primary"
+            android:textColor="@color/background"
+            android:textSize="15.5sp"
+            android:textStyle="bold"
+            android:textAllCaps="false"
+            android:stateListAnimator="@null"
+            android:elevation="8dp"
+            tools:text="Grant permission" />
+
+        <!-- Progress dots -->
+        <LinearLayout
+            android:id="@+id/progressDots"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="20dp" />
+
     </LinearLayout>
 
-    <!-- Spacer -->
-    <View
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
-
-    <!-- Permission status indicator -->
-    <TextView
-        android:id="@+id/tvPermissionStatus"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textSize="13sp"
-        android:textColor="@color/primary"
-        android:visibility="gone"
-        android:layout_marginBottom="12dp"
-        tools:text="Permission granted!"
-        tools:visibility="visible" />
-
-    <!-- Primary button -->
-    <Button
-        android:id="@+id/btnPrimary"
-        android:layout_width="match_parent"
-        android:layout_height="54dp"
-        android:background="@drawable/bg_btn_primary"
-        android:textColor="@color/background"
-        android:textSize="15.5sp"
-        android:textStyle="bold"
-        android:textAllCaps="false"
-        android:stateListAnimator="@null"
-        android:elevation="8dp"
-        tools:text="Grant permission" />
-
-    <!-- Progress dots -->
-    <LinearLayout
-        android:id="@+id/progressDots"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:layout_marginTop="24dp" />
-
-</LinearLayout>
+</FrameLayout>
