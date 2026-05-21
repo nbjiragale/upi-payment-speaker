@@ -49,6 +49,11 @@ class Settings(context: Context) {
         get() = prefs.getBoolean(KEY_SHOW_POPUP, true)
         set(value) = prefs.edit().putBoolean(KEY_SHOW_POPUP, value).apply()
 
+    /** App UI language tag. Empty or "system" means follow system locale. */
+    var appLocaleTag: String
+        get() = prefs.getString(KEY_APP_LOCALE, "") ?: ""
+        set(value) = prefs.edit().putString(KEY_APP_LOCALE, value).apply()
+
     var onboardingCompleted: Boolean
         get() = prefs.getBoolean(KEY_ONBOARDING_DONE, false)
         set(value) = prefs.edit().putBoolean(KEY_ONBOARDING_DONE, value).apply()
@@ -78,6 +83,17 @@ class Settings(context: Context) {
         }
     }
 
+    /** Available app UI language choices. */
+    enum class AppLanguage(val tag: String, val displayName: String) {
+        SYSTEM("", "System default"),
+        ENGLISH("en", "English"),
+        KANNADA("kn", "ಕನ್ನಡ");
+
+        companion object {
+            fun fromTag(tag: String): AppLanguage = entries.firstOrNull { it.tag == tag } ?: SYSTEM
+        }
+    }
+
     private companion object {
         const val KEY_LISTENING = "listening_enabled"
         const val KEY_MUTED_UNTIL = "muted_until_ms"
@@ -86,6 +102,7 @@ class Settings(context: Context) {
         const val KEY_SECOND_LOCALE = "second_locale"
         const val KEY_TTS_MODE = "tts_mode"
         const val KEY_SHOW_POPUP = "show_payment_popup"
+        const val KEY_APP_LOCALE = "app_locale"
         const val KEY_ONBOARDING_DONE = "onboarding_completed"
         const val KEY_LISTENER_BOUND_AT = "listener_last_bound_at"
     }

@@ -82,6 +82,9 @@
     <string name="settings_soon_badge">Soon</string>
     <string name="settings_version">UPI Payment Speaker · v%1$s</string>
     <string name="settings_footer">Made with ♥ in India</string>
+    <string name="settings_group_language">Language</string>
+    <string name="settings_app_language">App language</string>
+    <string name="settings_app_language_desc">English / ಕನ್ನಡ</string>
 
     <!-- Warning banners -->
     <string name="warn_battery_title">Battery optimisation is on</string>

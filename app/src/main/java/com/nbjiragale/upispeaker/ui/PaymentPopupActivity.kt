@@ -2,7 +2,7 @@ package com.nbjiragale.upispeaker.ui
 
 import android.animation.ObjectAnimator
 import android.app.Activity
-
+import android.content.Context
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
@@ -21,7 +21,9 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.nbjiragale.upispeaker.R
+import com.nbjiragale.upispeaker.data.Settings
 import com.nbjiragale.upispeaker.tts.NumberToWords
+import com.nbjiragale.upispeaker.util.LocaleHelper
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -33,6 +35,11 @@ import java.util.Locale
 class PaymentPopupActivity : Activity() {
 
     private val handler = Handler(Looper.getMainLooper())
+
+    override fun attachBaseContext(newBase: Context) {
+        val tag = Settings(newBase).appLocaleTag
+        super.attachBaseContext(LocaleHelper.applyLocale(newBase, tag))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

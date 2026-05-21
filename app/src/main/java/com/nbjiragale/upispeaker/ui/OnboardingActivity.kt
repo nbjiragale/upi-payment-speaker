@@ -1,6 +1,7 @@
 package com.nbjiragale.upispeaker.ui
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
@@ -23,12 +24,18 @@ import com.nbjiragale.upispeaker.oem.Oem
 import com.nbjiragale.upispeaker.oem.OemDetector
 import com.nbjiragale.upispeaker.oem.RestrictionDetector
 import com.nbjiragale.upispeaker.service.SpeakerForegroundService
+import com.nbjiragale.upispeaker.util.LocaleHelper
 
 class OnboardingActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityOnboardingBinding
     private lateinit var settings: Settings
     private lateinit var detector: RestrictionDetector
+
+    override fun attachBaseContext(newBase: Context) {
+        val tag = Settings(newBase).appLocaleTag
+        super.attachBaseContext(LocaleHelper.applyLocale(newBase, tag))
+    }
 
     private val steps = mutableListOf<Step>()
     private var index = 0

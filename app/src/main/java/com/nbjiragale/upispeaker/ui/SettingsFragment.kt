@@ -1,5 +1,6 @@
 package com.nbjiragale.upispeaker.ui
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.drawable.GradientDrawable
@@ -87,6 +88,14 @@ class SettingsFragment : Fragment() {
             settings.showPaymentPopup = isChecked
         }
 
+        // Group: Language
+        addGroup(container, getString(R.string.settings_group_language))
+        val langCard = createCard(container)
+        val currentLang = Settings.AppLanguage.fromTag(settings.appLocaleTag)
+        addChevronRow(langCard, getString(R.string.settings_app_language), currentLang.displayName) {
+            showLanguagePicker()
+        }
+
         // Group: Providers
         addGroup(container, getString(R.string.settings_group_providers))
         val providerCard = createCard(container)
@@ -115,6 +124,24 @@ class SettingsFragment : Fragment() {
         addChevronRow(permCard, getString(R.string.settings_rerun_wizard), null) {
             startActivity(Intent(requireContext(), OnboardingActivity::class.java))
         }
+    }
+
+    private fun showLanguagePicker() {
+        val languages = Settings.AppLanguage.entries.toTypedArray()
+        val names = languages.map { it.displayName }.toTypedArray()
+        val currentIndex = languages.indexOfFirst { it.tag == settings.appLocaleTag }.coerceAtLeast(0)
+
+        AlertDialog.Builder(requireContext(), R.style.Theme_UpiSpeaker_Dialog)
+            .setTitle(getString(R.string.settings_app_language))
+            .setSingleChoiceItems(names, currentIndex) { dialog, which ->
+                val selected = languages[which]
+                settings.appLocaleTag = selected.tag
+                dialog.dismiss()
+                // Recreate activity to apply new locale
+                requireActivity().recreate()
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
     }
 
     private fun addGroup(container: LinearLayout, title: String) {

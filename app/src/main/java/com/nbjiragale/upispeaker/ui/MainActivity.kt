@@ -1,5 +1,6 @@
 package com.nbjiragale.upispeaker.ui
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -7,6 +8,7 @@ import androidx.fragment.app.Fragment
 import com.nbjiragale.upispeaker.R
 import com.nbjiragale.upispeaker.data.Settings
 import com.nbjiragale.upispeaker.databinding.ActivityMainBinding
+import com.nbjiragale.upispeaker.util.LocaleHelper
 
 class MainActivity : AppCompatActivity() {
 
@@ -16,6 +18,11 @@ class MainActivity : AppCompatActivity() {
     private val homeFragment by lazy { HomeFragment() }
     private val historyFragment by lazy { HistoryFragment() }
     private val settingsFragment by lazy { SettingsFragment() }
+
+    override fun attachBaseContext(newBase: Context) {
+        val tag = Settings(newBase).appLocaleTag
+        super.attachBaseContext(LocaleHelper.applyLocale(newBase, tag))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
