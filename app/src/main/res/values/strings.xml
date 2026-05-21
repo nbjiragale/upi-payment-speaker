@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">UPI Payment Speaker</string>
+    <string name="permission_granted">Permission granted ✓</string>
 
     <!-- Notification listener service label (shown in the system Notification
          Access settings screen). -->

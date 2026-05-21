@@ -5,6 +5,8 @@ import android.content.Intent
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
@@ -30,14 +32,15 @@ class OnboardingActivity : AppCompatActivity() {
 
     private val steps = mutableListOf<Step>()
     private var index = 0
+    private var currentStepType: Step? = null
 
     private val requestNotifPerm = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
-    ) { advance() }
+    ) { checkAndAdvance() }
 
     private val openSettings = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
-    ) { advance() }
+    ) { checkAndAdvance() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,8 +56,41 @@ class OnboardingActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        checkAndAdvance()
+    }
+
+    private fun checkAndAdvance() {
+        val previousStep = currentStepType
         buildSteps()
-        if (steps.isEmpty()) finishOnboarding() else show(index.coerceAtMost(steps.lastIndex))
+
+        if (steps.isEmpty()) {
+            finishOnboarding()
+            return
+        }
+
+        if (previousStep != null && !steps.contains(previousStep)) {
+            // The permission for the current step was granted — show confirmation and auto-advance
+            showPermissionGranted()
+            return
+        }
+
+        // Step still exists (permission not granted yet), just re-show current step
+        show(index.coerceAtMost(steps.lastIndex))
+    }
+
+    private fun showPermissionGranted() {
+        binding.tvPermissionStatus.text = getString(R.string.permission_granted)
+        binding.tvPermissionStatus.setTextColor(ContextCompat.getColor(this, R.color.primary))
+        binding.tvPermissionStatus.visibility = View.VISIBLE
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            binding.tvPermissionStatus.visibility = View.GONE
+            if (index >= steps.size) {
+                finishOnboarding()
+            } else {
+                show(index.coerceAtMost(steps.lastIndex))
+            }
+        }, 800)
     }
 
     private fun buildSteps() {
@@ -73,8 +109,8 @@ class OnboardingActivity : AppCompatActivity() {
     private fun show(i: Int) {
         index = i
         val step = steps[i]
+        currentStepType = step
 
-        // Update step pill
         binding.tvStepNumber.text = (i + 1).toString()
         binding.tvStepIndicator.text = getString(R.string.step_of, i + 1, steps.size)
 
@@ -84,13 +120,10 @@ class OnboardingActivity : AppCompatActivity() {
         binding.btnPrimary.text = buttonText
         binding.btnPrimary.setOnClickListener { action() }
 
-        // Privacy note
         binding.privacyNote.visibility = if (showPrivacy) View.VISIBLE else View.GONE
+        binding.tvPermissionStatus.visibility = View.GONE
 
-        // Build progress dots
         buildProgressDots(i, steps.size)
-
-        // Build illustration
         buildIllustration(step)
     }
 
@@ -233,7 +266,6 @@ class OnboardingActivity : AppCompatActivity() {
         container.removeAllViews()
         val dp = resources.displayMetrics.density
 
-        // Simple notification card illustration
         val cardStack = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             gravity = Gravity.CENTER
@@ -243,12 +275,11 @@ class OnboardingActivity : AppCompatActivity() {
             )
         }
 
-        // Main notification card
         val card = LinearLayout(this).apply {
             orientation = LinearLayout.HORIZONTAL
             gravity = Gravity.CENTER_VERTICAL
-            val w = (240 * dp).toInt()
-            val h = (64 * dp).toInt()
+            val w = (220 * dp).toInt()
+            val h = (60 * dp).toInt()
             layoutParams = LinearLayout.LayoutParams(w, h).apply {
                 gravity = Gravity.CENTER
             }
@@ -261,7 +292,6 @@ class OnboardingActivity : AppCompatActivity() {
             setPadding((14 * dp).toInt(), (10 * dp).toInt(), (14 * dp).toInt(), (10 * dp).toInt())
         }
 
-        // Provider badge
         val badge = FrameLayout(this).apply {
             layoutParams = LinearLayout.LayoutParams((32 * dp).toInt(), (32 * dp).toInt())
             val bg = GradientDrawable().apply {
@@ -284,11 +314,10 @@ class OnboardingActivity : AppCompatActivity() {
         badge.addView(badgeLetter)
         card.addView(badge)
 
-        // Text column
         val textCol = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
-            setPadding((10 * dp).toInt(), 0, 0, 0)
+            setPadding((12 * dp).toInt(), 0, 0, 0)
         }
         textCol.addView(TextView(this).apply {
             text = "PhonePe"
