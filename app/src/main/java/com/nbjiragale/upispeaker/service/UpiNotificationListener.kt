@@ -46,6 +46,9 @@ class UpiNotificationListener : NotificationListenerService() {
         val settings = Settings(this)
         if (!settings.listeningEnabled || settings.isMuted()) return
 
+        if (pkg == Providers.PHONEPE && !settings.phonePeEnabled) return
+        if (pkg == Providers.GPAY && !settings.gPayEnabled) return
+
         val extras = sbn.notification.extras
         val title = extras?.getCharSequence(Notification.EXTRA_TITLE)?.toString()
         val text = extras?.getCharSequence(Notification.EXTRA_TEXT)?.toString()

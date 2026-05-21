@@ -39,7 +39,7 @@ class AnnouncementQueue(
         val id = "ann-${seq.incrementAndGet()}"
         Log.d(TAG, "Enqueuing announcement '$primaryUtterance' as $id")
 
-        tts.maximiseVolume()
+        if (settings.useAlarmVolume) tts.maximiseVolume()
         requestFocus()
         tts.ensureReady {
             tts.setLocale(localeFromTag(primaryTag))
@@ -66,7 +66,8 @@ class AnnouncementQueue(
 
     fun enqueueText(text: String) {
         val id = "raw-${seq.incrementAndGet()}"
-        tts.maximiseVolume()
+        val settings = Settings(context)
+        if (settings.useAlarmVolume) tts.maximiseVolume()
         requestFocus()
         tts.ensureReady {
             tts.speak(text, id) { _ -> abandonFocus() }

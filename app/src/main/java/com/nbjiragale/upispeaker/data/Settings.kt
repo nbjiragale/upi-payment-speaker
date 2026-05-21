@@ -26,6 +26,18 @@ class Settings(context: Context) {
         get() = prefs.getBoolean(KEY_ANNOUNCE_DEBITS, false)
         set(value) = prefs.edit().putBoolean(KEY_ANNOUNCE_DEBITS, value).apply()
 
+    var useAlarmVolume: Boolean
+        get() = prefs.getBoolean(KEY_USE_ALARM_VOLUME, true)
+        set(value) = prefs.edit().putBoolean(KEY_USE_ALARM_VOLUME, value).apply()
+
+    var phonePeEnabled: Boolean
+        get() = prefs.getBoolean(KEY_PHONEPE_ENABLED, true)
+        set(value) = prefs.edit().putBoolean(KEY_PHONEPE_ENABLED, value).apply()
+
+    var gPayEnabled: Boolean
+        get() = prefs.getBoolean(KEY_GPAY_ENABLED, true)
+        set(value) = prefs.edit().putBoolean(KEY_GPAY_ENABLED, value).apply()
+
     var preferredLocaleTag: String
         get() = prefs.getString(KEY_LOCALE, "en-IN") ?: "en-IN"
         set(value) = prefs.edit().putString(KEY_LOCALE, value).apply()
@@ -98,6 +110,9 @@ class Settings(context: Context) {
         const val KEY_LISTENING = "listening_enabled"
         const val KEY_MUTED_UNTIL = "muted_until_ms"
         const val KEY_ANNOUNCE_DEBITS = "announce_debits"
+        const val KEY_USE_ALARM_VOLUME = "use_alarm_volume"
+        const val KEY_PHONEPE_ENABLED = "phonepe_enabled"
+        const val KEY_GPAY_ENABLED = "gpay_enabled"
         const val KEY_LOCALE = "preferred_locale"
         const val KEY_SECOND_LOCALE = "second_locale"
         const val KEY_TTS_MODE = "tts_mode"

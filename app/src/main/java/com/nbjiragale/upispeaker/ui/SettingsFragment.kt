@@ -49,22 +49,28 @@ class SettingsFragment : Fragment() {
 
     private fun buildSettingsGroups(view: View) {
         val container = view.findViewById<LinearLayout>(R.id.settingsContainer)
-        val ctx = requireContext()
-        val dp = ctx.resources.displayMetrics.density
 
         // Group: Announcement
         addGroup(container, getString(R.string.settings_group_announcement))
         val announcementCard = createCard(container)
         addChevronRow(announcementCard, getString(R.string.settings_mode),
             if (settings.ttsMode == Settings.TtsMode.DUAL) getString(R.string.settings_mode_desc_dual)
-            else getString(R.string.settings_mode_desc_single))
+            else getString(R.string.settings_mode_desc_single)) {
+            showModePicker()
+        }
         addDivider(announcementCard)
         addChevronRow(announcementCard, getString(R.string.settings_primary_lang),
-            Settings.TtsLocale.fromTag(settings.preferredLocaleTag).displayName)
+            Settings.TtsLocale.fromTag(settings.preferredLocaleTag).displayName) {
+            showTtsLocalePicker(isPrimary = true)
+        }
         addDivider(announcementCard)
         val secondLangRow = addChevronRow(announcementCard, getString(R.string.settings_second_lang),
             if (settings.secondLocaleTag.isNotEmpty()) Settings.TtsLocale.fromTag(settings.secondLocaleTag).displayName
-            else getString(R.string.settings_second_lang_desc))
+            else getString(R.string.settings_second_lang_desc)) {
+            if (settings.ttsMode == Settings.TtsMode.DUAL) {
+                showTtsLocalePicker(isPrimary = false)
+            }
+        }
         if (settings.ttsMode == Settings.TtsMode.SINGLE) {
             secondLangRow.alpha = 0.4f
         }
@@ -73,7 +79,9 @@ class SettingsFragment : Fragment() {
         addGroup(container, getString(R.string.settings_group_sound))
         val soundCard = createCard(container)
         addToggleRow(soundCard, getString(R.string.settings_alarm_volume),
-            getString(R.string.settings_alarm_volume_desc), true) { }
+            getString(R.string.settings_alarm_volume_desc), settings.useAlarmVolume) { isChecked ->
+            settings.useAlarmVolume = isChecked
+        }
         addDivider(soundCard)
         addToggleRow(soundCard, getString(R.string.settings_announce_debits),
             getString(R.string.settings_announce_debits_desc), settings.announceDebits) { isChecked ->
@@ -99,9 +107,15 @@ class SettingsFragment : Fragment() {
         // Group: Providers
         addGroup(container, getString(R.string.settings_group_providers))
         val providerCard = createCard(container)
-        addProviderRow(providerCard, "PhonePe", 0xFF5F259F.toInt(), "P", true, enabled = true)
+        addProviderRow(providerCard, "PhonePe", 0xFF5F259F.toInt(), "P",
+            settings.phonePeEnabled, enabled = true) { isChecked ->
+            settings.phonePeEnabled = isChecked
+        }
         addDivider(providerCard)
-        addProviderRow(providerCard, "Google Pay", 0xFFFFFFFF.toInt(), "G", false, letterColor = 0xFF4285F4.toInt(), enabled = true)
+        addProviderRow(providerCard, "Google Pay", 0xFFFFFFFF.toInt(), "G",
+            settings.gPayEnabled, letterColor = 0xFF4285F4.toInt(), enabled = true) { isChecked ->
+            settings.gPayEnabled = isChecked
+        }
         addDivider(providerCard)
         addProviderRow(providerCard, "Paytm", 0xFF00BAF2.toInt(), "Pt", false, comingSoon = true)
         addDivider(providerCard)
@@ -119,10 +133,59 @@ class SettingsFragment : Fragment() {
         ).count { it }
         addChevronRow(permCard, getString(R.string.settings_permission_status),
             getString(R.string.settings_permission_status_desc, granted, 4),
-            warn = granted < 4)
+            warn = granted < 4) {
+            startActivity(Intent(requireContext(), OnboardingActivity::class.java))
+        }
         addDivider(permCard)
         addChevronRow(permCard, getString(R.string.settings_rerun_wizard), null) {
             startActivity(Intent(requireContext(), OnboardingActivity::class.java))
+        }
+    }
+
+    private fun showModePicker() {
+        val modes = Settings.TtsMode.entries.toTypedArray()
+        val names = arrayOf(getString(R.string.settings_mode_desc_single), getString(R.string.settings_mode_desc_dual))
+        val currentIndex = modes.indexOf(settings.ttsMode).coerceAtLeast(0)
+
+        AlertDialog.Builder(requireContext(), R.style.Theme_UpiSpeaker_Dialog)
+            .setTitle(getString(R.string.settings_mode))
+            .setSingleChoiceItems(names, currentIndex) { dialog, which ->
+                settings.ttsMode = modes[which]
+                dialog.dismiss()
+                refreshSettings()
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
+    }
+
+    private fun showTtsLocalePicker(isPrimary: Boolean) {
+        val locales = Settings.TtsLocale.entries.toTypedArray()
+        val names = locales.map { it.displayName }.toTypedArray()
+        val currentTag = if (isPrimary) settings.preferredLocaleTag else settings.secondLocaleTag
+        val currentIndex = locales.indexOfFirst { it.tag == currentTag }.coerceAtLeast(0)
+
+        val title = if (isPrimary) getString(R.string.settings_primary_lang) else getString(R.string.settings_second_lang)
+        AlertDialog.Builder(requireContext(), R.style.Theme_UpiSpeaker_Dialog)
+            .setTitle(title)
+            .setSingleChoiceItems(names, currentIndex) { dialog, which ->
+                val selected = locales[which]
+                if (isPrimary) {
+                    settings.preferredLocaleTag = selected.tag
+                } else {
+                    settings.secondLocaleTag = selected.tag
+                }
+                dialog.dismiss()
+                refreshSettings()
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
+    }
+
+    private fun refreshSettings() {
+        view?.let {
+            val container = it.findViewById<LinearLayout>(R.id.settingsContainer)
+            container.removeAllViews()
+            buildSettingsGroups(it)
         }
     }
 
@@ -304,7 +367,8 @@ class SettingsFragment : Fragment() {
         isOn: Boolean,
         letterColor: Int = 0xFFFFFFFF.toInt(),
         enabled: Boolean = false,
-        comingSoon: Boolean = false
+        comingSoon: Boolean = false,
+        onToggle: ((Boolean) -> Unit)? = null
     ) {
         val ctx = requireContext()
         val dp = ctx.resources.displayMetrics.density
@@ -363,6 +427,7 @@ class SettingsFragment : Fragment() {
             @Suppress("UseSwitchCompatOrMaterialCode")
             val toggle = Switch(ctx).apply {
                 isChecked = isOn
+                setOnCheckedChangeListener { _, checked -> onToggle?.invoke(checked) }
             }
             row.addView(toggle)
         }
