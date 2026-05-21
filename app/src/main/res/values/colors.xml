@@ -1,13 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="background">#0E1014</color>
-    <color name="card_surface">#1A1D24</color>
-    <color name="text_on_bg">#FFFFFFFF</color>
-    <color name="text_secondary">#FFB0B6C0</color>
-    <color name="text_on_card">#FFFFFFFF</color>
-    <color name="primary">#5BD0AA</color>
-    <color name="primary_dark">#3FA084</color>
-    <color name="on_primary">#FF0E1014</color>
-    <color name="accent">#FFC857</color>
+    <!-- Background -->
+    <color name="background">#FF0B0D11</color>
+
+    <!-- Surfaces -->
+    <color name="surface">#FF161A21</color>
+    <color name="surface_2">#FF1E232C</color>
+    <color name="surface_3">#FF262C36</color>
+
+    <!-- Borders -->
+    <color name="border">#0FFFFFFF</color>
+    <color name="border_hi">#1AFFFFFF</color>
+
+    <!-- Brand -->
+    <color name="primary">#FF5BD0AA</color>
+    <color name="primary_soft">#245BD0AA</color>
+    <color name="primary_dim">#0F5BD0AA</color>
+    <color name="primary_dark">#FF3FA084</color>
+    <color name="on_primary">#FF0B0D11</color>
+    <color name="accent">#FFFFC857</color>
+    <color name="accent_soft">#1FFFC857</color>
     <color name="warn">#FFE36161</color>
+    <color name="warn_soft">#1FE36161</color>
+
+    <!-- Text -->
+    <color name="fg">#FFF5F7FA</color>
+    <color name="fg_muted">#FF9AA3B2</color>
+    <color name="fg_dim">#FF5C6470</color>
+
+    <!-- Backward compat aliases -->
+    <color name="card_surface">@color/surface</color>
+    <color name="text_on_bg">@color/fg</color>
+    <color name="text_secondary">@color/fg_muted</color>
+    <color name="text_on_card">@color/fg</color>
+
+    <!-- Provider brand colors -->
+    <color name="phonepe_bg">#FF5F259F</color>
+    <color name="gpay_bg">#FFFFFFFF</color>
+    <color name="gpay_letter">#FF4285F4</color>
+    <color name="paytm_bg">#FF00BAF2</color>
+    <color name="bhim_bg">#FFFF7A00</color>
+
+    <!-- Misc -->
+    <color name="white">#FFFFFFFF</color>
+    <color name="black">#FF000000</color>
+    <color name="transparent">#00000000</color>
+    <color name="popup_overlay">#8C000000</color>
+    <color name="popup_card_bg">#F5161A21</color>
 </resources>
