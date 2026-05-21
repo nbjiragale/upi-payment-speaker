@@ -34,6 +34,11 @@ class MainActivity : AppCompatActivity() {
             if (!settings.listeningEnabled) toggleListening()
             SpeakerForegroundService.test(this)
         }
+        binding.btnTestPopup.setOnClickListener {
+            val popupIntent = Intent(this, PaymentPopupActivity::class.java)
+            popupIntent.putExtra(PaymentPopupActivity.EXTRA_AMOUNT_PAISE, 25000L)
+            startActivity(popupIntent)
+        }
         binding.btnSettings.setOnClickListener {
             startActivity(Intent(this, OnboardingActivity::class.java))
         }
